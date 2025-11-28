@@ -17,6 +17,7 @@
                     animation: {
                         'bounce-in': 'bounceIn 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) both',
                         'shake': 'shake 0.8s cubic-bezier(.36,.07,.19,.97) both',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
                     },
                     keyframes: {
                         bounceIn: {
@@ -32,6 +33,10 @@
                             '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
                             '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
                             '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
                         }
                     }
                 }
@@ -44,12 +49,9 @@
     <style>
         body { margin: 0; overflow: hidden; background-color: #ffe6f2; touch-action: manipulation; }
         .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-        
-        /* Scrollbar personalizada */
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #7da9e3; border-radius: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #404fc2; }
     </style>
 </head>
 <body>
@@ -90,7 +92,6 @@
         };
 
         const RECIPES = [
-            // Corrigido: Creme de Abacate, Sriracha Mayo (padronizado), Cenoura c/ Soja, Batata Doce Crocante
             { id: 1, name: "Sunny Salmon 🌞", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Couve roxa", "Edamame"], protein: ["Juicy Salmon", "Juicy Salmon"], sauce_final: ["Especial", "Creme de Abacate"], crispy: ["Não leva"], sesame: ["Sim"] },
             { id: 2, name: "Spicy Tuna 🐟", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Pepino", "Cenoura"], protein: ["Atum", "Atum"], sauce_final: ["Ponzu", "Spicy Peanuts"], crispy: ["Cebola frita"], sesame: ["Sim"] },
             { id: 3, name: "Vegetarian 🌿", base: ["Arroz basmati", "Arroz basmati"], sauce_base: ["Não leva"], greens: ["Abacate", "Hummus", "Hummus", "Tomate", "Pepino", "Azeitonas"], protein: ["Não leva"], sauce_final: ["Mint"], crispy: ["Batata Doce Crocante"], sesame: ["Sim"] },
@@ -143,6 +144,17 @@
             }
         };
 
+        // --- UTILS ---
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
         // --- FUNDO (MAR) ---
         const OceanBackground = () => {
             const canvasRef = React.useRef(null);
@@ -190,10 +202,12 @@
             const [currentPhaseIndex, setCurrentPhaseIndex] = React.useState(0);
             const [currentSelections, setCurrentSelections] = React.useState([]);
             const [allSelections, setAllSelections] = React.useState({});
+            const [phaseOptions, setPhaseOptions] = React.useState([]);
             const [timer, setTimer] = React.useState(20);
             const [timerEmoji, setTimerEmoji] = React.useState("😃");
             const [errorDetails, setErrorDetails] = React.useState([]);
 
+            // Timer Logic
             React.useEffect(() => {
                 if (gameState !== "PLAYING") return;
                 if (timer > 12) setTimerEmoji("😃"); else if (timer > 7) setTimerEmoji("🤨"); else if (timer > 4) setTimerEmoji("😬"); else setTimerEmoji("😱");
@@ -202,8 +216,41 @@
                 return () => clearInterval(interval);
             }, [timer, gameState]);
 
+            // Phase Options Logic (Shuffle & Limit to 9)
+            React.useEffect(() => {
+                if (gameState === "PLAYING" && selectedRecipe) {
+                    const phaseKey = PHASES[currentPhaseIndex].key;
+                    const fullList = getFullIngredientList(phaseKey);
+                    const requiredIngs = selectedRecipe[phaseKey];
+                    
+                    // 1. Identificar ingredientes obrigatórios únicos
+                    const requiredSet = new Set(requiredIngs);
+                    const requiredUnique = [...requiredSet];
+
+                    // 2. Identificar ingredientes "errados"
+                    const distractors = fullList.filter(ing => !requiredSet.has(ing));
+                    
+                    // 3. Embaralhar errados
+                    const shuffledDistractors = shuffleArray([...distractors]);
+
+                    // 4. Preencher até ter 9 (ou max disponível)
+                    const slotsNeeded = Math.max(0, 9 - requiredUnique.length);
+                    const selectedDistractors = shuffledDistractors.slice(0, slotsNeeded);
+
+                    // 5. Combinar e Embaralhar Final
+                    const finalOptions = shuffleArray([...requiredUnique, ...selectedDistractors]);
+                    
+                    setPhaseOptions(finalOptions);
+                }
+            }, [currentPhaseIndex, gameState, selectedRecipe]);
+
             const startGame = (recipe) => {
-                setSelectedRecipe(recipe); setGameState("PLAYING"); setCurrentPhaseIndex(0); setCurrentSelections([]); setAllSelections({}); setTimer(20);
+                setSelectedRecipe(recipe); 
+                setGameState("PLAYING"); 
+                setCurrentPhaseIndex(0); 
+                setCurrentSelections([]); 
+                setAllSelections({}); 
+                setTimer(20);
             };
 
             const handleSelection = (ingredient) => {
@@ -250,7 +297,7 @@
                 }
             };
 
-            const getIngredients = (key) => {
+            const getFullIngredientList = (key) => {
                  switch(key) {
                     case 'base': return INGREDIENTS_DB.bases;
                     case 'sauce_base': return INGREDIENTS_DB.sauces_base;
@@ -297,14 +344,14 @@
                                     <div className="flex flex-col items-center min-w-[60px]"><span className="text-3xl md:text-4xl">{timerEmoji}</span><span className="text-xl md:text-2xl font-bold text-[#404fc2]">{timer}s</span></div>
                                 </div>
 
-                                {/* LISTA DE INGREDIENTES (Scrollável) */}
-                                <div className="flex-1 overflow-y-auto p-2 md:p-6 custom-scroll min-h-0">
-                                    <div className={`grid gap-2 md:gap-3 ${PHASES[currentPhaseIndex].key === 'greens' ? 'grid-cols-2 md:grid-cols-4 lg:grid-cols-5' : 'grid-cols-2 md:grid-cols-4'}`}>
-                                        {getIngredients(PHASES[currentPhaseIndex].key).map(ing => {
+                                {/* LISTA DE INGREDIENTES (Limitada a 9 e Aleatória) */}
+                                <div className="flex-1 overflow-y-auto p-2 md:p-6 custom-scroll min-h-0 flex items-center justify-center">
+                                    <div className={`grid gap-2 md:gap-4 w-full ${phaseOptions.length > 6 ? 'grid-cols-3 md:grid-cols-3' : 'grid-cols-2 md:grid-cols-3'}`}>
+                                        {phaseOptions.map(ing => {
                                             const count = currentSelections.filter(i => i === ing).length;
                                             const isNoLeva = ing === "Não leva" || ing === "Não";
                                             return (
-                                                <button key={ing} onClick={() => handleSelection(ing)} className={`relative p-2 md:p-4 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all active:scale-95 flex items-center justify-center text-center h-20 md:h-24 shadow-sm break-words leading-tight ${isNoLeva ? "bg-[#5b9ed9] text-white" : "bg-white text-slate-700 border-2 border-transparent hover:border-[#7da9e3]"}`}>
+                                                <button key={ing} onClick={() => handleSelection(ing)} className={`relative p-2 md:p-4 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all active:scale-95 flex items-center justify-center text-center h-24 md:h-32 shadow-sm break-words leading-tight animate-fade-in ${isNoLeva ? "bg-[#5b9ed9] text-white" : "bg-white text-slate-700 border-2 border-transparent hover:border-[#7da9e3]"}`}>
                                                     {ing}
                                                     {count > 0 && <span className="absolute -top-2 -right-2 bg-[#404fc2] text-white text-xs w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow-md z-10">{count}</span>}
                                                 </button>
