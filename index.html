@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Poke House – Monte a Bowl v1.14</title>
+    <title>Poke House – Monte a Bowl v1.15</title>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -171,7 +171,7 @@
             return array;
         }
 
-        // --- FUNDO (CÉU ROSA, MAR AZUL DUPLO E RASTRO DOS SURFISTAS) ---
+        // --- FUNDO (CÉU ROSA 60%, MAR DIVIDIDO 16%/24%) ---
         const OceanBackground = ({ active }) => {
             const canvasRef = React.useRef(null);
             
@@ -181,14 +181,34 @@
                 if (!canvas) return;
                 const ctx = canvas.getContext("2d");
                 
-                // Fator do nível do mar: 0.6 significa que o céu é 60% e o mar 40%
-                const seaLevelFactor = 0.6; 
-                const skyColor = "#FFE6F2"; // Rosa Pastel 100
+                // --- CONFIGURAÇÃO DE ALTURAS ---
+                // Céu: 0% a 60%
+                const skyHeightRatio = 0.60;
+                
+                // Mar Camada Superior (Mar 2 - 16%): 60% a 76%
+                const seaTopHeightRatio = 0.16; 
+                
+                // Mar Camada Inferior (Mar 1 - 24%): 76% a 100%
+                // (O restante é preenchido)
 
-                // Apenas duas camadas de azul
-                const waves = [
-                    { color: "#80A8FF", offset: 15, amplitude: 8, wavelength: 120, speed: 0.2 }, // Azul mais fundo
-                    { color: "#A0C4FF", offset: 5,  amplitude: 6, wavelength: 90, speed: 0.3 },  // Azul mais claro (topo)
+                const skyColor = "#FFE6F2"; // Rosa Pastel
+
+                // Definição das camadas do mar com cores e offsets fixos
+                const seaLayers = [
+                    { 
+                        name: "Mar 2 (Topo)",
+                        color: "#A0C4FF", // Azul mais claro
+                        startYRatio: skyHeightRatio, // Começa em 60%
+                        endYRatio: skyHeightRatio + seaTopHeightRatio, // Termina em 76%
+                        wave: { amplitude: 5, wavelength: 90, speed: 0.3 }
+                    },
+                    { 
+                        name: "Mar 1 (Fundo)",
+                        color: "#80A8FF", // Azul mais escuro
+                        startYRatio: skyHeightRatio + seaTopHeightRatio, // Começa em 76%
+                        endYRatio: 1.0, // Vai até o fim
+                        wave: { amplitude: 8, wavelength: 120, speed: 0.2 }
+                    }
                 ];
                 
                 let surfers = []; 
@@ -198,9 +218,10 @@
                     const startSide = Math.random() > 0.5 ? 'LEFT' : 'RIGHT';
                     const slope = (Math.random() * 0.5) - 0.25; 
 
-                    const horizonY = canvas.height * seaLevelFactor;
-                    const minY = horizonY + 40;
-                    const maxY = canvas.height - 40;
+                    const horizonY = canvas.height * skyHeightRatio;
+                    // Surfistas aparecem em todo o mar (do horizonte para baixo)
+                    const minY = horizonY + 30;
+                    const maxY = canvas.height - 30;
                     const spawnY = minY + Math.random() * (maxY - minY);
                     const sizeScale = 0.7 + Math.random() * 0.6;
 
@@ -212,7 +233,7 @@
                         sprite: SURFER_EMOJIS[Math.floor(Math.random() * SURFER_EMOJIS.length)],
                         sizeScale: sizeScale,
                         active: true,
-                        trail: [] // Array para guardar o histórico de posições
+                        trail: [] 
                     };
                 };
 
@@ -225,23 +246,49 @@
                     time += 0.01;
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     
-                    const horizonY = canvas.height * seaLevelFactor;
+                    const h = canvas.height;
+                    const horizonY = h * skyHeightRatio;
 
-                    // 1. Desenha o Céu Rosa
+                    // 1. Desenha o Céu (0 até 60% + um pouquinho para cobrir o gap da onda)
                     ctx.fillStyle = skyColor; 
                     ctx.fillRect(0, 0, canvas.width, horizonY + 10); 
 
-                    // 2. Desenha as ondas
-                    waves.forEach((w) => drawWave(ctx, w, time, canvas.width, canvas.height, horizonY));
+                    // 2. Desenha as Camadas do Mar (de baixo para cima na ordem de renderização, ou seja, topo depois fundo? Não, desenhamos a camada de cima por último para sobrepor se necessário, mas aqui são faixas distintas).
+                    // Vamos desenhar a camada de baixo primeiro, depois a de cima, mas garantindo que preencham seus retângulos.
                     
-                    // 3. Gerenciamento de Surfistas
+                    seaLayers.forEach(layer => {
+                        const startY = h * layer.startYRatio;
+                        const endY = h * layer.endYRatio;
+                        const height = endY - startY;
+                        
+                        ctx.fillStyle = layer.color;
+                        ctx.beginPath();
+                        ctx.moveTo(0, endY); // Canto inferior esquerdo da faixa
+                        
+                        // Linha superior com onda
+                        for (let x = 0; x <= canvas.width; x += 10) {
+                            // A onda é desenhada na linha de topo desta camada
+                            const waveY = startY + Math.sin(x / layer.wave.wavelength + time * layer.wave.speed) * layer.wave.amplitude;
+                            ctx.lineTo(x, waveY);
+                        }
+                        
+                        ctx.lineTo(canvas.width, endY); // Canto inferior direito
+                        ctx.lineTo(0, endY); // Fecha
+                        ctx.fill();
+                        
+                        // Se for a última camada (fundo), garante que preencha até o fim absoluto da tela para evitar gaps em telas grandes
+                        if(layer.endYRatio === 1.0) {
+                             ctx.fillRect(0, endY - 1, canvas.width, h - endY + 1);
+                        }
+                    });
+                    
+                    // 3. Surfistas
                     if (surfers.length < 2 && Math.random() < 0.008) {
                         surfers.push(createSurfer());
                     }
 
                     surfers.forEach(f => updateSurfer(f, canvas.width, canvas.height, horizonY));
                     surfers = surfers.filter(f => f.active);
-                    // Desenha o rastro ANTES do surfista
                     surfers.forEach(f => drawSurferTrail(ctx, f));
                     surfers.forEach(f => drawSurferSprite(ctx, f));
                     
@@ -254,54 +301,36 @@
             if (!active) return null;
             return <canvas ref={canvasRef} style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', zIndex:-1}} />;
         };
-
-        function drawWave(ctx, w, t, width, height, horizonY) {
-            ctx.fillStyle = w.color;
-            ctx.beginPath();
-            ctx.moveTo(0, height);
-            for (let x = 0; x <= width; x += 10) {
-                const y = horizonY + w.offset + Math.sin(x / w.wavelength + t * w.speed) * w.amplitude;
-                ctx.lineTo(x, y);
-            }
-            ctx.lineTo(width, height);
-            ctx.lineTo(0, height);
-            ctx.fill();
-        }
         
         function updateSurfer(f, w, h, horizonY){ 
-            // Adiciona a posição atual ao histórico do rastro
             f.trail.push({x: f.x, y: f.y});
-            // Limita o tamanho do rastro (ex: últimos 25 frames)
             if (f.trail.length > 25) {
                 f.trail.shift();
             }
 
             f.x += f.speedX;
             f.y += f.speedX * f.slope;
-            // Margem maior no horizonte para ele sumir antes de bater no céu
+            
+            // Limites: Horizonte (topo) e Bordas da tela
             if(f.x < -150 || f.x > w + 150 || f.y < horizonY - 20 || f.y > h + 150){
                 f.active = false;
             }
         }
 
-        // Nova função para desenhar o rastro
         function drawSurferTrail(ctx, f) {
-            const trailSize = 25 * f.sizeScale; // Tamanho base do "pixel" do rastro
+            const trailSize = 25 * f.sizeScale; 
             f.trail.forEach((point, index) => {
-                // Calcula a opacidade baseada na idade do ponto (mais recente = mais visível)
                 const opacity = (index / f.trail.length) * 0.6; 
-                ctx.fillStyle = `rgba(240, 255, 255, ${opacity})`; // Branco azulado
-                // Desenha um pequeno quadrado (pixel) centrado na posição antiga
+                ctx.fillStyle = `rgba(240, 255, 255, ${opacity})`; 
                 ctx.fillRect(point.x + 10, point.y + 20, trailSize, trailSize * 0.6);
             });
         }
 
         function drawSurferSprite(ctx, f){ 
             ctx.font=`${Math.max(24,f.sizeScale*40)}px sans-serif`; 
-            // Sombra simples para destacar do rastro
             ctx.shadowColor = "rgba(0,0,0,0.1)"; ctx.shadowBlur = 5;
             ctx.fillText(f.sprite,f.x,f.y); 
-            ctx.shadowBlur = 0; // Reseta sombra
+            ctx.shadowBlur = 0; 
         }
 
 
@@ -581,7 +610,7 @@
                     </div>
                      {/* VERSION LABEL */}
        <div className="fixed bottom-1 right-2 text-xs text-slate-500/60 font-sans z-50 pointer-events-none select-none">
-           v1.14 BETA
+           v1.15 BETA
        </div>
                 </div>
             );
