@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Poke House – Monte a Bowl</title>
+    <title>Poke House – Monte a Bowl v1.12</title>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -52,7 +52,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
-        /* Fundo base alterado para azul claro para combinar com o novo mar */
+        /* Fundo base para o "céu" */
         body { margin: 0; overflow: hidden; background-color: #E0F2FF; touch-action: manipulation; }
         .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .custom-scroll::-webkit-scrollbar { width: 6px; }
@@ -78,14 +78,14 @@
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
         );
 
-        // --- DADOS ---
+        // --- DADOS ATUALIZADOS ---
         const INGREDIENTS_DB = {
             bases: ["Arroz de sushi", "Arroz preto", "Quinoa", "Arroz basmati", "Coconut Basmati", "Espinafres", "Winter Salad"],
             sauces_base: ["Azeite", "Azeite de Limão", "Vinagrete", "Ponzu", "Sriracha Mayo", "Não leva"],
             greens: [
                 "Batata Doce com Alecrim", "Brócolis", "Pickle Cebola", "Beterraba", "Cenoura c/ Soja", "Milho", "Abacaxi",
-                "Edamame", "Tomate cherry", "Couve roxa", "Courgette", "Cenoura", "Grana Padano", "Pepino", "Feta",
-                "Jalapeños", "Azeitonas", "Abacate", "Philadelphia", "Wakame", "Manga", "Hummus", "Tomate"
+                "Edamame", "Tomate Cherry", "Couve roxa", "Courgette", "Cenoura", "Grana Padano", "Pepino", "Feta",
+                "Jalapeños", "Azeitonas", "Abacate", "Philadelphia", "Wakame", "Manga", "Hummus", 
             ],
             proteins: [
                 "Salmão Braseado", "Filé de Salmão", "Frango Vietnamita", "Camarão Panado", "Frango", "Frango Teriyaki",
@@ -94,11 +94,11 @@
             sauces_final: [
                 "Creamy Caesar", "Creme de Abacate", "Spicy Peanuts", "Mel", "Chipotle", "Sésamo Shoyu", "Sriracha Mayo",
                 "Wasabi Mayo", "Azeite", "Azeite de Limão", "Manjericão e Hortelã", "Vinagrete", "Soja", "Teriyaki",
-                "Ponzu", "Especial", "Mint"
+                "Ponzu", "Especial",
             ],
             crispies: [
                 "Cebola frita", "Ervilhas Wasabi", "Algas Nori", "Amêndoa", "Batata Doce", "Lima", "Bacon", "Croutons",
-                "Alho Crocante", "Batata Doce Crocante", "Não leva", "Cebola Crocante"
+                "Batata Doce Crocante", "Não leva", "Cebola Crocante"
             ],
             sesame: ["Sim", "Não"]
         };
@@ -107,15 +107,15 @@
             // HOUSE BOWLS
             { id: 1, category: "HOUSE", name: "Sunny Salmon 🌞", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Couve roxa", "Edamame"], protein: ["Juicy Salmon", "Juicy Salmon"], sauce_final: ["Especial", "Creme de Abacate"], crispy: ["Não leva"], sesame: ["Sim"] },
             { id: 2, category: "HOUSE", name: "Spicy Tuna 🐟", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Pepino", "Cenoura"], protein: ["Atum", "Atum"], sauce_final: ["Ponzu", "Spicy Peanuts"], crispy: ["Cebola frita"], sesame: ["Sim"] },
-            { id: 3, category: "HOUSE", name: "Vegetarian 🌿", base: ["Arroz basmati", "Arroz basmati"], sauce_base: ["Não leva"], greens: ["Abacate", "Hummus", "Hummus", "Tomate", "Pepino", "Azeitonas"], protein: ["Não leva"], sauce_final: ["Mint"], crispy: ["Batata Doce Crocante"], sesame: ["Sim"] },
-            { id: 4, category: "HOUSE", name: "Chicken 🐔", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Tomate cherry", "Courgette"], protein: ["Frango Teriyaki", "Frango Teriyaki"], sauce_final: ["Teriyaki", "Sriracha Mayo"], crispy: ["Amêndoa"], sesame: ["Sim"] },
-            { id: 5, category: "HOUSE", name: "Fire Salmon 🔥", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Sriracha Mayo"], greens: ["Jalapeños", "Tomate cherry", "Pepino"], protein: ["Salmão", "Salmão"], sauce_final: ["Sriracha Mayo"], crispy: ["Cebola frita"], sesame: ["Sim"] },
+            { id: 3, category: "HOUSE", name: "Vegetarian 🌿", base: ["Arroz basmati", "Arroz basmati"], sauce_base: ["Não leva"], greens: ["Abacate", "Hummus", "Hummus", "Tomate Cherry", "Pepino", "Azeitonas"], protein: ["Não leva"], sauce_final: ["Manjericão e Hortelã"], crispy: ["Batata Doce Crocante"], sesame: ["Sim"] },
+            { id: 4, category: "HOUSE", name: "Chicken 🐔", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Tomate Cherry", "Courgette"], protein: ["Frango Teriyaki", "Frango Teriyaki"], sauce_final: ["Teriyaki", "Sriracha Mayo"], crispy: ["Amêndoa"], sesame: ["Sim"] },
+            { id: 5, category: "HOUSE", name: "Fire Salmon 🔥", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Sriracha Mayo"], greens: ["Jalapeños", "Tomate Cherry", "Pepino"], protein: ["Salmão", "Salmão"], sauce_final: ["Sriracha Mayo"], crispy: ["Cebola frita"], sesame: ["Sim"] },
             { id: 6, category: "HOUSE", name: "Mixed Seas 🌊", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Manga", "Wakame", "Cenoura", "Pickle Cebola"], protein: ["Atum", "Salmão"], sauce_final: ["Ponzu"], crispy: ["Ervilhas Wasabi"], sesame: ["Sim"] },
             { id: 7, category: "HOUSE", name: "Crispy Shrimp 🦐", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Philadelphia", "Manga", "Pepino"], protein: Array(8).fill("Camarão Panado"), sauce_final: ["Teriyaki", "Sriracha Mayo"], crispy: ["Algas Nori"], sesame: ["Sim"] },
             { id: 8, category: "HOUSE", name: "Salmon Sushi 🍣", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Philadelphia", "Edamame"], protein: ["Salmão Braseado", "Salmão Braseado"], sauce_final: ["Teriyaki"], crispy: ["Cebola Crocante"], sesame: ["Sim"] },
             
-            // GREEN BOWLS (Atualizado: The Caesar leva Lima nos crispies)
-            { id: 9, category: "GREEN", name: "The Caesar 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Tomate", "Tomate", "Grana Padano"], protein: ["Frango", "Frango", "Frango"], sauce_final: ["Creamy Caesar"], crispy: ["Bacon", "Croutons", "Lima"], sesame: ["Não"] },
+            // GREEN BOWLS
+            { id: 9, category: "GREEN", name: "The Caesar 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Tomate Cherry", "Tomate Cherry", "Grana Padano"], protein: ["Frango", "Frango", "Frango"], sauce_final: ["Creamy Caesar"], crispy: ["Bacon", "Croutons", "Lima"], sesame: ["Não"] },
             { id: 10, category: "GREEN", name: "Exotic Salmon 🥗", base: ["Coconut Basmati", "Espinafres", "Espinafres", "Espinafres"], sauce_base: ["Azeite de Limão"], greens: ["Batata Doce com Alecrim", "Batata Doce com Alecrim", "Brócolis", "Abacate"], protein: ["Filé de Salmão", "Filé de Salmão", "Filé de Salmão"], sauce_final: ["Sriracha Mayo"], crispy: ["Não leva"], sesame: ["Não"] },
             { id: 11, category: "GREEN", name: "Velvet Garden 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Cenoura c/ Soja", "Beterraba", "Azeitonas", "Pickle Cebola", "Feta", "Feta", "Feta"], protein: ["Não leva"], sauce_final: ["Manjericão e Hortelã"], crispy: ["Não leva"], sesame: ["Não"] },
             { id: 12, category: "GREEN", name: "Cozy Chicken 🥗", base: ["Coconut Basmati", "Espinafres", "Espinafres"], sauce_base: ["Azeite de Limão"], greens: ["Brócolis", "Batata Doce com Alecrim", "Couve roxa", "Courgette"], protein: ["Frango Vietnamita", "Frango Vietnamita", "Frango Vietnamita"], sauce_final: ["Soja"], crispy: ["Não leva"], sesame: ["Não"] }
@@ -127,7 +127,7 @@
             { key: "greens", title: "3️⃣ – Greens:", hint: "Escolha os greens." },
             { key: "protein", title: "4️⃣ – Proteína:", hint: "Escolha as proteínas." },
             { key: "sauce_final", title: "5️⃣ – Molho final:", hint: "Escolha os molhos." },
-            { key: "crispy", title: "6️⃣ – Crispy:", hint: "Escolha UM crispy." },
+            { key: "crispy", title: "6️⃣ – Crispy:", hint: "Escolha UM crispy." }, 
             { key: "sesame", title: "7️⃣ – Sésamo:", hint: "Essa Bowl leva sésamo?" },
         ];
 
@@ -170,7 +170,7 @@
             return array;
         }
 
-        // --- FUNDO (MAR AZUL EM CAMADAS COM SURFISTAS DIAGONAIS) ---
+        // --- FUNDO (CÉU E MAR COM DIVISÃO CLARA E SURFISTAS RESTRITOS) ---
         const OceanBackground = ({ active }) => {
             const canvasRef = React.useRef(null);
             
@@ -180,11 +180,12 @@
                 if (!canvas) return;
                 const ctx = canvas.getContext("2d");
                 
-                // Novas cores: Camadas de Azul
+                const seaLevelFactor = 0.3; 
+
                 const waves = [
-                    { color: "#A0C4FF", baseYFactor: 0.85, amplitude: 5, wavelength: 60, speed: 0.5 }, // Azul médio
-                    { color: "#BDE0FE", baseYFactor: 0.75, amplitude: 4, wavelength: 80, speed: 0.3 }, // Azul claro
-                    { color: "#80A8FF", baseYFactor: 0.65, amplitude: 6, wavelength: 100, speed: 0.2 }, // Azul mais escuro
+                    { color: "#80A8FF", offset: 20, amplitude: 8, wavelength: 100, speed: 0.2 }, 
+                    { color: "#A0C4FF", offset: 10, amplitude: 6, wavelength: 80, speed: 0.3 },  
+                    { color: "#BDE0FE", offset: 0,  amplitude: 5, wavelength: 60, speed: 0.5 },  
                 ];
                 
                 let surfers = []; 
@@ -192,17 +193,20 @@
 
                 const createSurfer = () => {
                     const startSide = Math.random() > 0.5 ? 'LEFT' : 'RIGHT';
-                    // Define uma inclinação diagonal (para cima ou para baixo)
-                    const slope = (Math.random() * 0.8) - 0.4; 
+                    const slope = (Math.random() * 0.6) - 0.3; 
+
+                    const horizonY = canvas.height * seaLevelFactor;
+                    const minY = horizonY + 50;
+                    const maxY = canvas.height - 50;
+                    const spawnY = minY + Math.random() * (maxY - minY);
 
                     return { 
                         x: startSide === 'LEFT' ? -100 : canvas.width + 100, 
-                        y: Math.random() * canvas.height * 0.6 + (canvas.height * 0.2), // Altura inicial aleatória
-                        // Velocidade constante horizontal, direção depende do lado inicial
-                        speedX: (startSide === 'LEFT' ? 1 : -1) * (1 + Math.random()), 
+                        y: spawnY,
+                        speedX: (startSide === 'LEFT' ? 1 : -1) * (1 + Math.random() * 1.5), 
                         slope: slope,
                         sprite: SURFER_EMOJIS[Math.floor(Math.random() * SURFER_EMOJIS.length)],
-                        sizeScale: 0.8 + Math.random() * 0.7,
+                        sizeScale: 0.7 + Math.random() * 0.6,
                         active: true
                     };
                 };
@@ -216,20 +220,18 @@
                     time += 0.01;
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     
-                    // Fundo do céu (Azul mais claro da paleta)
-                    ctx.fillStyle = "#E0F2FF"; 
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    const horizonY = canvas.height * seaLevelFactor;
 
-                    // Desenha as ondas em camadas
-                    waves.forEach((w) => drawWave(ctx, w, time, canvas.width, canvas.height));
+                    ctx.fillStyle = "#E0F2FF"; 
+                    ctx.fillRect(0, 0, canvas.width, horizonY + 5); 
+
+                    waves.forEach((w) => drawWave(ctx, w, time, canvas.width, canvas.height, horizonY));
                     
-                    // Gerenciamento de Surfistas (Max 2)
-                    if (surfers.length < 2 && Math.random() < 0.01) {
+                    if (surfers.length < 2 && Math.random() < 0.008) {
                         surfers.push(createSurfer());
                     }
 
-                    surfers.forEach(f => updateSurfer(f, canvas.width, canvas.height));
-                    // Remove surfistas inativos (fora da tela)
+                    surfers.forEach(f => updateSurfer(f, canvas.width, canvas.height, horizonY));
                     surfers = surfers.filter(f => f.active);
                     surfers.forEach(f => drawSurfer(ctx, f));
                     
@@ -243,16 +245,23 @@
             return <canvas ref={canvasRef} style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', zIndex:-1}} />;
         };
 
-        function drawWave(ctx,w,t,width,height){ ctx.fillStyle=w.color; ctx.beginPath(); ctx.moveTo(0,height); const baseY=height*w.baseYFactor; for(let x=0;x<=width;x+=10) ctx.lineTo(x,baseY+Math.sin(x/w.wavelength+t*w.speed)*w.amplitude); ctx.lineTo(width,height); ctx.fill(); }
+        function drawWave(ctx, w, t, width, height, horizonY) {
+            ctx.fillStyle = w.color;
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+            for (let x = 0; x <= width; x += 10) {
+                const y = horizonY + w.offset + Math.sin(x / w.wavelength + t * w.speed) * w.amplitude;
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.fill();
+        }
         
-        // Lógica de movimento diagonal
-        function updateSurfer(f, w, h){ 
+        function updateSurfer(f, w, h, horizonY){ 
             f.x += f.speedX;
-            // Movimento Y é baseado no X vezes a inclinação (slope)
             f.y += f.speedX * f.slope;
-
-            // Verifica se saiu completamente da tela
-            if(f.x < -150 || f.x > w + 150 || f.y < -150 || f.y > h + 150){
+            if(f.x < -150 || f.x > w + 150 || f.y < horizonY - 30 || f.y > h + 150){
                 f.active = false;
             }
         }
@@ -272,13 +281,11 @@
             const [timerEmoji, setTimerEmoji] = React.useState("😃");
             const [errorDetails, setErrorDetails] = React.useState([]);
             
-            // SCORE SYSTEM
             const [startTime, setStartTime] = React.useState(0);
             const [finalScore, setFinalScore] = React.useState(0);
             const [playerName, setPlayerName] = React.useState("");
             const [highScore, setHighScore] = React.useState({ name: "Ainda Ninguém", score: 0 });
 
-            // Load High Score on Mount
             React.useEffect(() => {
                 const savedScore = localStorage.getItem('pokeHighScore');
                 if (savedScore) {
@@ -286,7 +293,6 @@
                 }
             }, []);
 
-            // Timer Logic
             React.useEffect(() => {
                 if (gameState !== "PLAYING") return;
                 if (timer > 12) setTimerEmoji("😃"); else if (timer > 7) setTimerEmoji("🤨"); else if (timer > 4) setTimerEmoji("😬"); else setTimerEmoji("😱");
@@ -295,7 +301,6 @@
                 return () => clearInterval(interval);
             }, [timer, gameState]);
 
-            // Phase Options Logic
             React.useEffect(() => {
                 if (gameState === "PLAYING" && selectedRecipe) {
                     const phaseKey = PHASES[currentPhaseIndex].key;
@@ -319,7 +324,7 @@
                 setCurrentSelections([]); 
                 setAllSelections({}); 
                 setTimer(20);
-                setStartTime(Date.now()); // Mark start time
+                setStartTime(Date.now());
             };
 
             const resetToHome = () => {
@@ -360,10 +365,8 @@
                     if (JSON.stringify(required) !== JSON.stringify(selected)) errors.push(`Erro em ${phase.title.replace(":", "")}. Era: ${required.join(", ")}`);
                 });
                 
-                // Calculate Score
                 if (errors.length === 0) {
                     const durationSeconds = (Date.now() - startTime) / 1000;
-                    // Base 1000 - (5 points per second)
                     const score = Math.max(0, Math.round(1000 - (durationSeconds * 5)));
                     setFinalScore(score);
                 }
@@ -382,8 +385,6 @@
 
             const saveScore = () => {
                 if (!playerName.trim()) return;
-                
-                // Check if new High Score
                 if (finalScore > highScore.score) {
                     const newRecord = { name: playerName, score: finalScore };
                     setHighScore(newRecord);
@@ -459,7 +460,13 @@
                                 <div className="flex justify-between items-center p-4 border-b border-pastel-blue-200/50 bg-pastel-blue-100/40 shrink-0">
                                     <div>
                                         <h2 className="text-xl md:text-3xl font-bold text-pastel-blue-500">{PHASES[currentPhaseIndex].title}</h2>
-                                        <p className="text-xs md:text-base text-slate-600">{PHASES[currentPhaseIndex].hint}</p>
+                                        
+                                        <p className="text-xs md:text-base text-slate-600">
+                                            {selectedRecipe[PHASES[currentPhaseIndex].key].length > 1 
+                                                ? `Escolha ${selectedRecipe[PHASES[currentPhaseIndex].key].length} opções.` 
+                                                : PHASES[currentPhaseIndex].hint}
+                                        </p>
+
                                         <div className="text-xs md:text-sm mt-1 font-bold text-pastel-blue-400">Selecionado: {currentSelections.length} / {selectedRecipe[PHASES[currentPhaseIndex].key].length}</div>
                                     </div>
                                     <div className="flex flex-col items-center min-w-[60px]"><span className="text-3xl md:text-4xl">{timerEmoji}</span><span className="text-xl md:text-2xl font-bold text-pastel-blue-500">{timer}s</span></div>
@@ -535,9 +542,9 @@
                             </div>
                         )}
                     </div>
-                     {/* NEW: Version Label */}
+                     {/* VERSION LABEL */}
        <div className="fixed bottom-1 right-2 text-xs text-slate-500/60 font-sans z-50 pointer-events-none select-none">
-           v1.10 BETA
+           v1.12 BETA
        </div>
                 </div>
             );
