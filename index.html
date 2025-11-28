@@ -92,18 +92,21 @@
         };
 
         const RECIPES = [
-            { id: 1, name: "Sunny Salmon 🌞", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Couve roxa", "Edamame"], protein: ["Juicy Salmon", "Juicy Salmon"], sauce_final: ["Especial", "Creme de Abacate"], crispy: ["Não leva"], sesame: ["Sim"] },
-            { id: 2, name: "Spicy Tuna 🐟", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Pepino", "Cenoura"], protein: ["Atum", "Atum"], sauce_final: ["Ponzu", "Spicy Peanuts"], crispy: ["Cebola frita"], sesame: ["Sim"] },
-            { id: 3, name: "Vegetarian 🌿", base: ["Arroz basmati", "Arroz basmati"], sauce_base: ["Não leva"], greens: ["Abacate", "Hummus", "Hummus", "Tomate", "Pepino", "Azeitonas"], protein: ["Não leva"], sauce_final: ["Mint"], crispy: ["Batata Doce Crocante"], sesame: ["Sim"] },
-            { id: 4, name: "Chicken 🐔", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Tomate cherry", "Courgette"], protein: ["Frango Teriyaki", "Frango Teriyaki"], sauce_final: ["Teriyaki", "Sriracha Mayo"], crispy: ["Amêndoa"], sesame: ["Sim"] },
-            { id: 5, name: "Fire Salmon 🔥", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Sriracha Mayo"], greens: ["Jalapeños", "Tomate cherry", "Pepino"], protein: ["Salmão", "Salmão"], sauce_final: ["Sriracha Mayo"], crispy: ["Cebola frita"], sesame: ["Sim"] },
-            { id: 6, name: "Mixed Seas 🌊", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Manga", "Wakame", "Cenoura", "Pickle Cebola"], protein: ["Atum", "Salmão"], sauce_final: ["Ponzu"], crispy: ["Ervilhas Wasabi"], sesame: ["Sim"] },
-            { id: 7, name: "Crispy Shrimp 🦐", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Philadelphia", "Manga", "Pepino"], protein: Array(8).fill("Camarão Panado"), sauce_final: ["Teriyaki", "Sriracha Mayo"], crispy: ["Algas Nori"], sesame: ["Sim"] },
-            { id: 8, name: "Salmon Sushi 🍣", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Philadelphia", "Edamame"], protein: ["Salmão Braseado", "Salmão Braseado"], sauce_final: ["Teriyaki"], crispy: ["Cebola Crocante"], sesame: ["Sim"] },
-            { id: 9, name: "The Caesar 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Tomate", "Tomate", "Grana Padano"], protein: ["Frango", "Frango", "Frango"], sauce_final: ["Creamy Caesar"], crispy: ["Bacon", "Croutons"], sesame: ["Não"] },
-            { id: 10, name: "Exotic Salmon 🥗", base: ["Coconut Basmati", "Espinafres", "Espinafres", "Espinafres"], sauce_base: ["Azeite de Limão"], greens: ["Batata Doce com Alecrim", "Batata Doce com Alecrim", "Brócolis", "Abacate"], protein: ["Filé de Salmão", "Filé de Salmão", "Filé de Salmão"], sauce_final: ["Sriracha Mayo"], crispy: ["Não leva"], sesame: ["Sim"] },
-            { id: 11, name: "Velvet Garden 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Cenoura c/ Soja", "Beterraba", "Azeitonas", "Pickle Cebola", "Feta", "Feta", "Feta"], protein: ["Não leva"], sauce_final: ["Manjericão e Hortelã"], crispy: ["Não leva"], sesame: ["Sim"] },
-            { id: 12, name: "Cozy Chicken 🥗", base: ["Coconut Basmati", "Espinafres", "Espinafres"], sauce_base: ["Azeite de Limão"], greens: ["Brócolis", "Batata Doce com Alecrim", "Couve roxa", "Courgette"], protein: ["Frango Vietnamita", "Frango Vietnamita", "Frango Vietnamita"], sauce_final: ["Soja"], crispy: ["Não leva"], sesame: ["Sim"] }
+            // HOUSE BOWLS
+            { id: 1, category: "HOUSE", name: "Sunny Salmon 🌞", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Couve roxa", "Edamame"], protein: ["Juicy Salmon", "Juicy Salmon"], sauce_final: ["Especial", "Creme de Abacate"], crispy: ["Não leva"], sesame: ["Sim"] },
+            { id: 2, category: "HOUSE", name: "Spicy Tuna 🐟", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Pepino", "Cenoura"], protein: ["Atum", "Atum"], sauce_final: ["Ponzu", "Spicy Peanuts"], crispy: ["Cebola frita"], sesame: ["Sim"] },
+            { id: 3, category: "HOUSE", name: "Vegetarian 🌿", base: ["Arroz basmati", "Arroz basmati"], sauce_base: ["Não leva"], greens: ["Abacate", "Hummus", "Hummus", "Tomate", "Pepino", "Azeitonas"], protein: ["Não leva"], sauce_final: ["Mint"], crispy: ["Batata Doce Crocante"], sesame: ["Sim"] },
+            { id: 4, category: "HOUSE", name: "Chicken 🐔", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Tomate cherry", "Courgette"], protein: ["Frango Teriyaki", "Frango Teriyaki"], sauce_final: ["Teriyaki", "Sriracha Mayo"], crispy: ["Amêndoa"], sesame: ["Sim"] },
+            { id: 5, category: "HOUSE", name: "Fire Salmon 🔥", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Sriracha Mayo"], greens: ["Jalapeños", "Tomate cherry", "Pepino"], protein: ["Salmão", "Salmão"], sauce_final: ["Sriracha Mayo"], crispy: ["Cebola frita"], sesame: ["Sim"] },
+            { id: 6, category: "HOUSE", name: "Mixed Seas 🌊", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Manga", "Wakame", "Cenoura", "Pickle Cebola"], protein: ["Atum", "Salmão"], sauce_final: ["Ponzu"], crispy: ["Ervilhas Wasabi"], sesame: ["Sim"] },
+            { id: 7, category: "HOUSE", name: "Crispy Shrimp 🦐", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Philadelphia", "Manga", "Pepino"], protein: Array(8).fill("Camarão Panado"), sauce_final: ["Teriyaki", "Sriracha Mayo"], crispy: ["Algas Nori"], sesame: ["Sim"] },
+            { id: 8, category: "HOUSE", name: "Salmon Sushi 🍣", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Philadelphia", "Edamame"], protein: ["Salmão Braseado", "Salmão Braseado"], sauce_final: ["Teriyaki"], crispy: ["Cebola Crocante"], sesame: ["Sim"] },
+            
+            // GREEN BOWLS
+            { id: 9, category: "GREEN", name: "The Caesar 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Tomate", "Tomate", "Grana Padano"], protein: ["Frango", "Frango", "Frango"], sauce_final: ["Creamy Caesar"], crispy: ["Bacon", "Croutons"], sesame: ["Não"] },
+            { id: 10, category: "GREEN", name: "Exotic Salmon 🥗", base: ["Coconut Basmati", "Espinafres", "Espinafres", "Espinafres"], sauce_base: ["Azeite de Limão"], greens: ["Batata Doce com Alecrim", "Batata Doce com Alecrim", "Brócolis", "Abacate"], protein: ["Filé de Salmão", "Filé de Salmão", "Filé de Salmão"], sauce_final: ["Sriracha Mayo"], crispy: ["Não leva"], sesame: ["Sim"] },
+            { id: 11, category: "GREEN", name: "Velvet Garden 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Cenoura c/ Soja", "Beterraba", "Azeitonas", "Pickle Cebola", "Feta", "Feta", "Feta"], protein: ["Não leva"], sauce_final: ["Manjericão e Hortelã"], crispy: ["Não leva"], sesame: ["Sim"] },
+            { id: 12, category: "GREEN", name: "Cozy Chicken 🥗", base: ["Coconut Basmati", "Espinafres", "Espinafres"], sauce_base: ["Azeite de Limão"], greens: ["Brócolis", "Batata Doce com Alecrim", "Couve roxa", "Courgette"], protein: ["Frango Vietnamita", "Frango Vietnamita", "Frango Vietnamita"], sauce_final: ["Soja"], crispy: ["Não leva"], sesame: ["Sim"] }
         ];
 
         const PHASES = [
@@ -198,6 +201,7 @@
         // --- APP ---
         function App() {
             const [gameState, setGameState] = React.useState("HOME");
+            const [menuCategory, setMenuCategory] = React.useState(null); // 'HOUSE', 'GREEN' or null
             const [selectedRecipe, setSelectedRecipe] = React.useState(null);
             const [currentPhaseIndex, setCurrentPhaseIndex] = React.useState(0);
             const [currentSelections, setCurrentSelections] = React.useState([]);
@@ -223,21 +227,12 @@
                     const fullList = getFullIngredientList(phaseKey);
                     const requiredIngs = selectedRecipe[phaseKey];
                     
-                    // 1. Identificar ingredientes obrigatórios únicos
                     const requiredSet = new Set(requiredIngs);
                     const requiredUnique = [...requiredSet];
-
-                    // 2. Identificar ingredientes "errados"
                     const distractors = fullList.filter(ing => !requiredSet.has(ing));
-                    
-                    // 3. Embaralhar errados
                     const shuffledDistractors = shuffleArray([...distractors]);
-
-                    // 4. Preencher até ter 9 (ou max disponível)
                     const slotsNeeded = Math.max(0, 9 - requiredUnique.length);
                     const selectedDistractors = shuffledDistractors.slice(0, slotsNeeded);
-
-                    // 5. Combinar e Embaralhar Final
                     const finalOptions = shuffleArray([...requiredUnique, ...selectedDistractors]);
                     
                     setPhaseOptions(finalOptions);
@@ -251,6 +246,12 @@
                 setCurrentSelections([]); 
                 setAllSelections({}); 
                 setTimer(20);
+            };
+
+            const resetToHome = () => {
+                setGameState("HOME");
+                setMenuCategory(null);
+                setSelectedRecipe(null);
             };
 
             const handleSelection = (ingredient) => {
@@ -290,10 +291,10 @@
                 if (success) {
                     setGameState("RESULT_SUCCESS"); playSound("happy");
                     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                    setTimeout(() => setGameState("HOME"), 10000);
+                    setTimeout(resetToHome, 10000);
                 } else {
                     setErrorDetails(errors); setGameState("RESULT_FAIL"); playSound("sad");
-                    setTimeout(() => setGameState("HOME"), 20000);
+                    setTimeout(resetToHome, 20000);
                 }
             };
 
@@ -319,13 +320,31 @@
                         ${gameState === "HOME" ? "w-full h-full overflow-y-auto" : "hidden md:flex h-full overflow-y-auto"}
                     `}>
                         <h1 className="text-2xl font-bold mb-4 text-[#404fc2] text-center md:text-left">Poke House <br/><span className="text-lg font-normal">Monte a Bowl 🥗</span></h1>
-                        <div className={`grid gap-3 ${gameState === "HOME" ? "grid-cols-1" : "grid-cols-1"}`}>
-                            {RECIPES.map(recipe => (
-                                <button key={recipe.id} onClick={() => startGame(recipe)} disabled={gameState === "PLAYING" && selectedRecipe?.id !== recipe.id} className={`p-3 rounded-xl shadow-sm text-left font-semibold transition-all ${selectedRecipe?.id === recipe.id ? "bg-[#7da9e3] text-white scale-105" : "bg-white/80 hover:bg-white text-slate-700"} ${gameState === "PLAYING" && selectedRecipe?.id !== recipe.id ? "opacity-50 hidden md:block" : ""}`}>
-                                    {recipe.name}
+                        
+                        {/* SELEÇÃO DE CATEGORIAS */}
+                        {menuCategory === null ? (
+                            <div className="flex flex-col gap-4 mt-8 md:mt-0 h-full justify-center md:justify-start">
+                                <button onClick={() => setMenuCategory("HOUSE")} className="bg-[#404fc2] text-white p-6 rounded-2xl shadow-lg hover:bg-[#3442a8] transition-all transform hover:scale-105 flex flex-col items-center">
+                                    <span className="text-4xl mb-2">🐟</span>
+                                    <span className="text-xl font-bold">House Bowls</span>
                                 </button>
-                            ))}
-                        </div>
+                                <button onClick={() => setMenuCategory("GREEN")} className="bg-[#03fc8c] text-slate-800 p-6 rounded-2xl shadow-lg hover:bg-[#02e07a] transition-all transform hover:scale-105 flex flex-col items-center">
+                                    <span className="text-4xl mb-2">🥗</span>
+                                    <span className="text-xl font-bold">Green Bowls</span>
+                                </button>
+                            </div>
+                        ) : (
+                            /* LISTA DE RECEITAS DA CATEGORIA */
+                            <div className="flex flex-col gap-2 animate-fade-in">
+                                <button onClick={() => setMenuCategory(null)} className="mb-2 text-[#404fc2] font-bold flex items-center gap-2 hover:bg-white/50 p-2 rounded-lg"><IconArrowLeft size={16}/> Voltar</button>
+                                <h3 className="font-bold text-slate-600 mb-2 uppercase tracking-wide">{menuCategory} BOWLS</h3>
+                                {RECIPES.filter(r => r.category === menuCategory).map(recipe => (
+                                    <button key={recipe.id} onClick={() => startGame(recipe)} disabled={gameState === "PLAYING" && selectedRecipe?.id !== recipe.id} className={`p-3 rounded-xl shadow-sm text-left font-semibold transition-all ${selectedRecipe?.id === recipe.id ? "bg-[#7da9e3] text-white scale-105" : "bg-white/80 hover:bg-white text-slate-700"} ${gameState === "PLAYING" && selectedRecipe?.id !== recipe.id ? "opacity-50 hidden md:block" : ""}`}>
+                                        {recipe.name}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* ÁREA DE JOGO */}
@@ -362,7 +381,7 @@
 
                                 {/* FOOTER (Fixo) */}
                                 <div className="p-3 md:p-4 border-t border-slate-200/50 bg-white/40 flex justify-between shrink-0">
-                                    <button onClick={() => setGameState("HOME")} className="flex items-center gap-2 text-[#404fc2] font-bold text-sm md:text-base hover:bg-white/50 px-3 py-2 rounded-lg transition-colors"><IconHome size={20}/> INÍCIO</button>
+                                    <button onClick={resetToHome} className="flex items-center gap-2 text-[#404fc2] font-bold text-sm md:text-base hover:bg-white/50 px-3 py-2 rounded-lg transition-colors"><IconHome size={20}/> INÍCIO</button>
                                     <button onClick={handleUndo} disabled={currentSelections.length === 0} className="flex items-center gap-2 px-4 md:px-6 py-2 bg-slate-200 rounded-full font-bold text-slate-600 disabled:opacity-50 hover:bg-slate-300 text-sm md:text-base"><IconArrowLeft size={20}/> Desfazer</button>
                                 </div>
                             </div>
@@ -386,9 +405,10 @@
                         )}
 
                         {gameState === "HOME" && (
-                            <div className="hidden md:block text-center bg-white/40 p-8 rounded-xl backdrop-blur-sm">
-                                <p className="text-[#404fc2] font-bold text-xl">Selecione uma receita ao lado para começar!</p>
-                                <div className="mt-4 text-4xl animate-bounce">🥗</div>
+                            <div className="hidden md:flex flex-col items-center justify-center text-center bg-white/40 p-10 rounded-3xl backdrop-blur-sm shadow-xl max-w-lg">
+                                <p className="text-[#404fc2] font-bold text-2xl mb-4">Bem-vindo ao Treino Poke House!</p>
+                                <p className="text-slate-700 mb-6">Selecione uma categoria no menu para começar seu treinamento.</p>
+                                <div className="mt-4 text-6xl animate-bounce">🥗</div>
                             </div>
                         )}
                     </div>
