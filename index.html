@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Poke House – Treino v2.04 BETA</title>
+    <title>Poke House – Treino v2.05 BETA</title>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -53,7 +53,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
-        /* Fundo base */
         body { margin: 0; overflow: hidden; background-color: #FFE6F2; touch-action: manipulation; }
         .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .custom-scroll::-webkit-scrollbar { width: 6px; }
@@ -78,47 +77,40 @@
         const IconCheck = ({ size = 24, color = "currentColor" }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         );
+        const IconList = ({ size = 16, color = "currentColor" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        );
 
-        // --- DADOS DO SISTEMA ---
-        
+        // --- HISTÓRICO DE VERSÕES ---
+        const CHANGELOG = [
+            { version: "2.05", date: "Atual", changes: ["Menu de 'Versão' clicável com histórico de alterações."] },
+            { version: "2.04", date: "Anterior", changes: ["Lógica do timer ajustada (emojis de tensão)", "Timer fica vermelho nos últimos 6 segundos."] },
+            { version: "2.03", date: "Anterior", changes: ["Atualização receitas Smoothies (Modo E 2x)", "Inclusão Banana no 'Into the Sun'"] },
+            { version: "2.01", date: "Anterior", changes: ["Criação da categoria SMOOTHIES", "Lógica separada para Bowls vs Smoothies", "Novos ingredientes e fases específicas"] },
+            { version: "1.18", date: "Anterior", changes: ["Remoção do sistema de Pontuação e Nome", "Simplificação da tela de sucesso"] },
+            { version: "1.16", date: "Anterior", changes: ["Ajuste no movimento dos surfistas (Zigzag lento)", "Correção de colisão com o horizonte"] },
+            { version: "1.15", date: "Anterior", changes: ["Ajuste nas proporções do cenário (Céu 60%, Mar 40%)", "Limpeza de ingredientes duplicados"] },
+            { version: "1.12", date: "Anterior", changes: ["Correção 'Tomate' vs 'Tomate Cherry'", "Ajuste no ingrediente 'Hortelã'"] },
+            { version: "1.11", date: "Anterior", changes: ["Dica inteligente para 'The Caesar' (quantidade)", "Novo fundo do mar com surfistas"] }
+        ];
+
+        // --- DADOS DO JOGO ---
         const INGREDIENTS_DB = {
-            // --- INGREDIENTES DE BOWLS ---
             bases: ["Arroz de sushi", "Arroz preto", "Quinoa", "Arroz basmati", "Coconut Basmati", "Espinafres", "Winter Salad"],
             sauces_base: ["Azeite", "Azeite de Limão", "Vinagrete", "Ponzu", "Sriracha Mayo", "Não leva"],
-            greens: [
-                "Batata Doce com Alecrim", "Brócolis", "Pickle Cebola", "Beterraba", "Cenoura c/ Soja", "Milho", "Abacaxi",
-                "Edamame", "Tomate Cherry", "Couve roxa", "Courgette", "Cenoura", "Grana Padano", "Pepino", "Feta",
-                "Jalapeños", "Azeitonas", "Abacate", "Philadelphia", "Wakame", "Manga", "Hummus", 
-                "Hortelã (Fresca)"
-            ],
-            proteins: [
-                "Salmão Braseado", "Filé de Salmão", "Frango Vietnamita", "Camarão Panado", "Frango", "Frango Teriyaki",
-                "Camarão", "Juicy Salmon", "Juicy Tuna", "Salmão", "Atum", "Tofu Grelhado", "Ovo", "Não leva"
-            ],
-            sauces_final: [
-                "Creamy Caesar", "Creme de Abacate", "Spicy Peanuts", "Mel", "Chipotle", "Sésamo Shoyu", "Sriracha Mayo",
-                "Wasabi Mayo", "Azeite", "Azeite de Limão", "Manjericão e Hortelã", "Vinagrete", "Soja", "Teriyaki",
-                "Ponzu", "Especial"
-            ],
-            crispies: [
-                "Cebola frita", "Ervilhas Wasabi", "Algas Nori", "Amêndoa", "Batata Doce", "Lima", "Bacon", "Croutons",
-                "Batata Doce Crocante", "Não leva", "Cebola Crocante"
-            ],
+            greens: ["Batata Doce com Alecrim", "Brócolis", "Pickle Cebola", "Beterraba", "Cenoura c/ Soja", "Milho", "Abacaxi", "Edamame", "Tomate Cherry", "Couve roxa", "Courgette", "Cenoura", "Grana Padano", "Pepino", "Feta", "Jalapeños", "Azeitonas", "Abacate", "Philadelphia", "Wakame", "Manga", "Hummus", "Hortelã (Fresca)"],
+            proteins: ["Salmão Braseado", "Filé de Salmão", "Frango Vietnamita", "Camarão Panado", "Frango", "Frango Teriyaki", "Camarão", "Juicy Salmon", "Juicy Tuna", "Salmão", "Atum", "Tofu Grelhado", "Ovo", "Não leva"],
+            sauces_final: ["Creamy Caesar", "Creme de Abacate", "Spicy Peanuts", "Mel", "Chipotle", "Sésamo Shoyu", "Sriracha Mayo", "Wasabi Mayo", "Azeite", "Azeite de Limão", "Manjericão e Hortelã", "Vinagrete", "Soja", "Teriyaki", "Ponzu", "Especial"],
+            crispies: ["Cebola frita", "Ervilhas Wasabi", "Algas Nori", "Amêndoa", "Batata Doce", "Lima", "Bacon", "Croutons", "Batata Doce Crocante", "Não leva", "Cebola Crocante"],
             sesame: ["Sim", "Não"],
-
-            // --- INGREDIENTES DE SMOOTHIES ---
             smoothie_liquid: ["Leite de Coco", "Leite", "Suco de Maçã"],
             smoothie_amount: ["150ml", "250ml", "200ml"],
-            smoothie_ingredients: [
-                "Morango", "Banana 90g", "Manga 40g", "Ananás 30g", "Pepino 20g", "Abacate 45g", 
-                "Espinafre 30g", "Sumo de Lima 25g", "Gengibre 5g"
-            ],
+            smoothie_ingredients: ["Morango", "Banana 90g", "Manga 40g", "Ananás 30g", "Pepino 20g", "Abacate 45g", "Espinafre 30g", "Sumo de Lima 25g", "Gengibre 5g"],
             smoothie_ice: ["Gelo 60g", "Gelo 40g", "Gelo 90g"],
             smoothie_mode: ["Modo A", "Modo B", "Modo C", "Modo D", "Modo E", "Modo F"]
         };
 
         const RECIPES = [
-            // HOUSE BOWLS
             { id: 1, category: "HOUSE", name: "Sunny Salmon 🌞", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Couve roxa", "Edamame"], protein: ["Juicy Salmon", "Juicy Salmon"], sauce_final: ["Especial", "Creme de Abacate"], crispy: ["Não leva"], sesame: ["Sim"] },
             { id: 2, category: "HOUSE", name: "Spicy Tuna 🐟", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Couve roxa", "Pepino", "Cenoura"], protein: ["Atum", "Atum"], sauce_final: ["Ponzu", "Spicy Peanuts"], crispy: ["Cebola frita"], sesame: ["Sim"] },
             { id: 3, category: "HOUSE", name: "Vegetarian 🌿", base: ["Arroz basmati", "Arroz basmati"], sauce_base: ["Não leva"], greens: ["Abacate", "Hummus", "Hummus", "Tomate Cherry", "Pepino", "Azeitonas"], protein: ["Não leva"], sauce_final: ["Manjericão e Hortelã"], crispy: ["Batata Doce Crocante"], sesame: ["Sim"] },
@@ -127,20 +119,15 @@
             { id: 6, category: "HOUSE", name: "Mixed Seas 🌊", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Manga", "Wakame", "Cenoura", "Pickle Cebola"], protein: ["Atum", "Salmão"], sauce_final: ["Ponzu"], crispy: ["Ervilhas Wasabi"], sesame: ["Sim"] },
             { id: 7, category: "HOUSE", name: "Crispy Shrimp 🦐", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Philadelphia", "Manga", "Pepino"], protein: Array(8).fill("Camarão Panado"), sauce_final: ["Teriyaki", "Sriracha Mayo"], crispy: ["Algas Nori"], sesame: ["Sim"] },
             { id: 8, category: "HOUSE", name: "Salmon Sushi 🍣", base: ["Arroz de sushi", "Arroz de sushi"], sauce_base: ["Não leva"], greens: ["Abacate", "Philadelphia", "Edamame"], protein: ["Salmão Braseado", "Salmão Braseado"], sauce_final: ["Teriyaki"], crispy: ["Cebola Crocante"], sesame: ["Sim"] },
-            
-            // GREEN BOWLS
             { id: 9, category: "GREEN", name: "The Caesar 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Tomate Cherry", "Tomate Cherry", "Grana Padano"], protein: ["Frango", "Frango", "Frango"], sauce_final: ["Creamy Caesar"], crispy: ["Bacon", "Croutons", "Lima"], sesame: ["Não"] },
             { id: 10, category: "GREEN", name: "Exotic Salmon 🥗", base: ["Coconut Basmati", "Espinafres", "Espinafres", "Espinafres"], sauce_base: ["Azeite de Limão"], greens: ["Batata Doce com Alecrim", "Batata Doce com Alecrim", "Brócolis", "Abacate"], protein: ["Filé de Salmão", "Filé de Salmão", "Filé de Salmão"], sauce_final: ["Sriracha Mayo"], crispy: ["Não leva"], sesame: ["Não"] },
             { id: 11, category: "GREEN", name: "Velvet Garden 🥗", base: ["Winter Salad", "Winter Salad", "Winter Salad"], sauce_base: ["Vinagrete"], greens: ["Cenoura c/ Soja", "Beterraba", "Azeitonas", "Pickle Cebola", "Feta", "Feta", "Feta"], protein: ["Não leva"], sauce_final: ["Manjericão e Hortelã"], crispy: ["Não leva"], sesame: ["Não"] },
             { id: 12, category: "GREEN", name: "Cozy Chicken 🥗", base: ["Coconut Basmati", "Espinafres", "Espinafres"], sauce_base: ["Azeite de Limão"], greens: ["Brócolis", "Batata Doce com Alecrim", "Couve roxa", "Courgette"], protein: ["Frango Vietnamita", "Frango Vietnamita", "Frango Vietnamita"], sauce_final: ["Soja"], crispy: ["Não leva"], sesame: ["Não"] },
-
-            // SMOOTHIES
             { id: 13, category: "SMOOTHIE", name: "Into the Sun 💛", smoothie_liquid: ["Leite de Coco"], smoothie_amount: ["150ml"], smoothie_ingredients: ["Manga 40g", "Manga 40g", "Ananás 30g", "Ananás 30g", "Banana 90g"], smoothie_ice: ["Gelo 60g"], smoothie_mode: ["Modo E", "Modo E"] },
             { id: 14, category: "SMOOTHIE", name: "Sweet Pink 🩷", smoothie_liquid: ["Leite"], smoothie_amount: ["150ml"], smoothie_ingredients: ["Morango", "Morango", "Morango", "Morango", "Banana 90g"], smoothie_ice: ["Gelo 60g"], smoothie_mode: ["Modo E", "Modo E"] },
             { id: 15, category: "SMOOTHIE", name: "So Green 💚", smoothie_liquid: ["Suco de Maçã"], smoothie_amount: ["250ml"], smoothie_ingredients: ["Pepino 20g", "Abacate 45g", "Espinafre 30g", "Sumo de Lima 25g", "Gengibre 5g"], smoothie_ice: ["Gelo 60g"], smoothie_mode: ["Modo E", "Modo E"] }
         ];
 
-        // Definição das Fases para Bowls
         const PHASES_BOWL = [
             { key: "base", title: "1️⃣ – Base:", hint: "Escolha as bases." },
             { key: "sauce_base", title: "2️⃣ – Molho da base:", hint: "Escolha o molho." },
@@ -151,7 +138,6 @@
             { key: "sesame", title: "7️⃣ – Sésamo:", hint: "Essa Bowl leva sésamo?" },
         ];
 
-        // Definição das Fases para Smoothies
         const PHASES_SMOOTHIE = [
             { key: "smoothie_liquid", title: "1️⃣ – Líquido:", hint: "Qual a base líquida?" },
             { key: "smoothie_amount", title: "2️⃣ – Quantidade:", hint: "Qual o volume?" },
@@ -169,181 +155,105 @@
             const gain = ctx.createGain();
             osc.connect(gain);
             gain.connect(ctx.destination);
-            
             const now = ctx.currentTime;
             if (type === "happy") {
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                osc.start(); osc.stop(now + 0.1);
+                osc.type = "sine"; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(); osc.stop(now + 0.1);
             } else {
-                osc.type = "sawtooth";
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.linearRampToValueAtTime(150, now + 0.3);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                osc.start(); osc.stop(now + 0.3);
+                osc.type = "sawtooth"; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(150, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3); osc.start(); osc.stop(now + 0.3);
             }
         };
 
-        // --- UTILS ---
         function shuffleArray(array) {
             let currentIndex = array.length, randomIndex;
-            while (currentIndex != 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-            }
+            while (currentIndex != 0) { randomIndex = Math.floor(Math.random() * currentIndex); currentIndex--; [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]; }
             return array;
         }
 
-        // --- FUNDO (CÉU ROSA 60%, MAR DIVIDIDO 16%/24%, SURFISTAS ZIGZAG LENTO) ---
+        // --- FUNDO ---
         const OceanBackground = ({ active }) => {
             const canvasRef = React.useRef(null);
-            
             React.useEffect(() => {
                 if (!active) return;
                 const canvas = canvasRef.current;
-                if (!canvas) return;
                 const ctx = canvas.getContext("2d");
-                
-                const skyHeightRatio = 0.60;
-                const seaTopHeightRatio = 0.16; 
-                const skyColor = "#FFE6F2";
-
-                const seaLayers = [
-                    { name: "Mar 2 (Topo)", color: "#A0C4FF", startYRatio: skyHeightRatio, endYRatio: skyHeightRatio + seaTopHeightRatio, wave: { amplitude: 5, wavelength: 90, speed: 0.3 } },
-                    { name: "Mar 1 (Fundo)", color: "#80A8FF", startYRatio: skyHeightRatio + seaTopHeightRatio, endYRatio: 1.0, wave: { amplitude: 8, wavelength: 120, speed: 0.2 } }
-                ];
-                
-                let surfers = []; 
-                const SURFER_EMOJIS = ['🏄‍♂️', '🏄‍♀️'];
-
+                const skyHeightRatio = 0.60; const seaTopHeightRatio = 0.16; const skyColor = "#FFE6F2";
+                const seaLayers = [ { name: "Mar 2 (Topo)", color: "#A0C4FF", startYRatio: skyHeightRatio, endYRatio: skyHeightRatio + seaTopHeightRatio, wave: { amplitude: 5, wavelength: 90, speed: 0.3 } }, { name: "Mar 1 (Fundo)", color: "#80A8FF", startYRatio: skyHeightRatio + seaTopHeightRatio, endYRatio: 1.0, wave: { amplitude: 8, wavelength: 120, speed: 0.2 } } ];
+                let surfers = []; const SURFER_EMOJIS = ['🏄‍♂️', '🏄‍♀️'];
                 const createSurfer = () => {
-                    const startSide = Math.random() > 0.5 ? 'LEFT' : 'RIGHT';
-                    const horizonY = canvas.height * skyHeightRatio;
-                    const minY = horizonY + 50;
-                    const maxY = canvas.height - 50;
-                    const spawnY = minY + Math.random() * (maxY - minY);
-                    const sizeScale = 0.7 + Math.random() * 0.6;
-
-                    return { 
-                        x: startSide === 'LEFT' ? -150 : canvas.width + 150, 
-                        y: spawnY,
-                        speedX: (startSide === 'LEFT' ? 1 : -1) * (0.4 + Math.random() * 0.4), 
-                        verticalDir: Math.random() > 0.5 ? 1 : -1,
-                        verticalSpeedFactor: 0.3 + Math.random() * 0.3,
-                        zigzagTimer: 0,
-                        zigzagInterval: 150 + Math.floor(Math.random() * 150),
-                        sprite: SURFER_EMOJIS[Math.floor(Math.random() * SURFER_EMOJIS.length)],
-                        sizeScale: sizeScale,
-                        active: true,
-                        trail: [] 
-                    };
+                    const startSide = Math.random() > 0.5 ? 'LEFT' : 'RIGHT'; const horizonY = canvas.height * skyHeightRatio; const minY = horizonY + 50; const maxY = canvas.height - 50; const spawnY = minY + Math.random() * (maxY - minY);
+                    return { x: startSide === 'LEFT' ? -150 : canvas.width + 150, y: spawnY, speedX: (startSide === 'LEFT' ? 1 : -1) * (0.4 + Math.random() * 0.4), verticalDir: Math.random() > 0.5 ? 1 : -1, verticalSpeedFactor: 0.3 + Math.random() * 0.3, zigzagTimer: 0, zigzagInterval: 150 + Math.floor(Math.random() * 150), sprite: SURFER_EMOJIS[Math.floor(Math.random() * SURFER_EMOJIS.length)], sizeScale: 0.7 + Math.random() * 0.6, active: true, trail: [] };
                 };
-
                 const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
                 window.addEventListener("resize", resize); resize();
-
-                let animationFrameId;
-                let time = 0;
+                let animationFrameId; let time = 0;
                 const loop = () => {
-                    time += 0.01;
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    const h = canvas.height;
-                    const horizonY = h * skyHeightRatio;
-                    const seaBottomY = h;
-
-                    ctx.fillStyle = skyColor; 
-                    ctx.fillRect(0, 0, canvas.width, horizonY + 10); 
-
+                    time += 0.01; ctx.clearRect(0, 0, canvas.width, canvas.height); const h = canvas.height; const horizonY = h * skyHeightRatio; const seaBottomY = h;
+                    ctx.fillStyle = skyColor; ctx.fillRect(0, 0, canvas.width, horizonY + 10);
                     seaLayers.forEach(layer => {
-                        const startY = h * layer.startYRatio;
-                        const endY = h * layer.endYRatio;
-                        ctx.fillStyle = layer.color;
-                        ctx.beginPath();
-                        ctx.moveTo(0, endY);
-                        for (let x = 0; x <= canvas.width; x += 10) {
-                            const waveY = startY + Math.sin(x / layer.wave.wavelength + time * layer.wave.speed) * layer.wave.amplitude;
-                            ctx.lineTo(x, waveY);
-                        }
-                        ctx.lineTo(canvas.width, endY);
-                        ctx.lineTo(0, endY);
-                        ctx.fill();
-                        if(layer.endYRatio === 1.0) ctx.fillRect(0, endY - 1, canvas.width, h - endY + 1);
+                        const startY = h * layer.startYRatio; const endY = h * layer.endYRatio;
+                        ctx.fillStyle = layer.color; ctx.beginPath(); ctx.moveTo(0, endY);
+                        for (let x = 0; x <= canvas.width; x += 10) { const waveY = startY + Math.sin(x / layer.wave.wavelength + time * layer.wave.speed) * layer.wave.amplitude; ctx.lineTo(x, waveY); }
+                        ctx.lineTo(canvas.width, endY); ctx.lineTo(0, endY); ctx.fill(); if(layer.endYRatio === 1.0) ctx.fillRect(0, endY - 1, canvas.width, h - endY + 1);
                     });
-                    
-                    if (surfers.length < 2 && Math.random() < 0.005) { 
-                        surfers.push(createSurfer());
-                    }
-
+                    if (surfers.length < 2 && Math.random() < 0.005) { surfers.push(createSurfer()); }
                     surfers.forEach(f => updateSurfer(f, canvas.width, canvas.height, horizonY, seaBottomY, time));
-                    surfers = surfers.filter(f => f.active);
-                    surfers.forEach(f => drawSurferTrail(ctx, f));
-                    surfers.forEach(f => drawSurferSprite(ctx, f));
-                    
+                    surfers = surfers.filter(f => f.active); surfers.forEach(f => drawSurferTrail(ctx, f)); surfers.forEach(f => drawSurferSprite(ctx, f));
                     animationFrameId = requestAnimationFrame(loop);
                 };
                 animationFrameId = requestAnimationFrame(loop);
                 return () => { window.removeEventListener("resize", resize); cancelAnimationFrame(animationFrameId); };
             }, [active]);
-
             if (!active) return null;
             return <canvas ref={canvasRef} style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', zIndex:-1}} />;
         };
-        
         function updateSurfer(f, w, h, horizonY, seaBottomY, t){ 
-            f.trail.push({x: f.x, y: f.y});
-            if (f.trail.length > 30) f.trail.shift();
-
-            f.x += f.speedX;
-
-            f.zigzagTimer++;
-            
+            f.trail.push({x: f.x, y: f.y}); if (f.trail.length > 30) f.trail.shift();
+            f.x += f.speedX; f.zigzagTimer++;
             let nextY = f.y + (f.speedX * f.verticalDir * f.verticalSpeedFactor);
-
-            const safetyMarginTop = 40;
-            const safetyMarginBottom = 40;
-
-            if (f.verticalDir === -1 && nextY < horizonY + safetyMarginTop) {
-                f.verticalDir = 1;
-                f.zigzagTimer = 0;
-            } else if (f.verticalDir === 1 && nextY > seaBottomY - safetyMarginBottom) {
-                f.verticalDir = -1;
-                f.zigzagTimer = 0;
-            } else if (f.zigzagTimer > f.zigzagInterval) {
-                f.verticalDir *= -1;
-                f.zigzagTimer = 0;
-            }
-
-            f.y += Math.abs(f.speedX) * f.verticalDir * f.verticalSpeedFactor;
-            f.y += Math.sin(t * 2 + f.x * 0.01) * 0.5;
-
-            if(f.x < -200 || f.x > w + 200) {
-                f.active = false;
-            }
+            if (f.verticalDir === -1 && nextY < horizonY + 40) { f.verticalDir = 1; f.zigzagTimer = 0; } else if (f.verticalDir === 1 && nextY > seaBottomY - 40) { f.verticalDir = -1; f.zigzagTimer = 0; } else if (f.zigzagTimer > f.zigzagInterval) { f.verticalDir *= -1; f.zigzagTimer = 0; }
+            f.y += Math.abs(f.speedX) * f.verticalDir * f.verticalSpeedFactor; f.y += Math.sin(t * 2 + f.x * 0.01) * 0.5;
+            if(f.x < -200 || f.x > w + 200) { f.active = false; }
         }
+        function drawSurferTrail(ctx, f) { const trailSize = 25 * f.sizeScale; f.trail.forEach((point, index) => { const opacity = (index / f.trail.length) * 0.5; ctx.fillStyle = `rgba(220, 245, 255, ${opacity})`; ctx.fillRect(point.x + 10, point.y + 20, trailSize, trailSize * 0.6); }); }
+        function drawSurferSprite(ctx, f){ ctx.font=`${Math.max(24,f.sizeScale*40)}px sans-serif`; ctx.shadowColor = "rgba(0,80,150,0.2)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 5; ctx.fillText(f.sprite,f.x,f.y); ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; }
 
-        function drawSurferTrail(ctx, f) {
-            const trailSize = 25 * f.sizeScale; 
-            f.trail.forEach((point, index) => {
-                const opacity = (index / f.trail.length) * 0.5; 
-                ctx.fillStyle = `rgba(220, 245, 255, ${opacity})`; 
-                ctx.fillRect(point.x + 10, point.y + 20, trailSize, trailSize * 0.6);
-            });
-        }
+        // --- COMPONENTE MODAL DE CHANGELOG ---
+        const ChangelogModal = ({ onClose }) => (
+            <div className="fixed inset-0 z-[60] bg-black/40 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+                <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl relative">
+                    <button onClick={onClose} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                    <h3 className="font-bold text-2xl mb-6 text-pastel-blue-500 flex items-center gap-2">
+                        <IconList /> Histórico de Versões
+                    </h3>
+                    <div className="space-y-6">
+                        {CHANGELOG.map((item, index) => (
+                            <div key={index} className="border-l-4 border-pastel-blue-200 pl-4">
+                                <div className="flex justify-between items-baseline mb-1">
+                                    <span className="font-bold text-lg text-slate-700">v{item.version}</span>
+                                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{item.date}</span>
+                                </div>
+                                <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                    {item.changes.map((change, i) => (
+                                        <li key={i}>{change}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-8 pt-4 border-t border-slate-100 text-center">
+                        <button onClick={onClose} className="bg-slate-100 text-slate-600 px-6 py-2 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors">
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
 
-        function drawSurferSprite(ctx, f){ 
-            ctx.font=`${Math.max(24,f.sizeScale*40)}px sans-serif`; 
-            ctx.shadowColor = "rgba(0,80,150,0.2)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 5;
-            ctx.fillText(f.sprite,f.x,f.y); 
-            ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-        }
-
-
-        // --- APP ---
+        // --- APP PRINCIPAL ---
         function App() {
             const [gameState, setGameState] = React.useState("HOME");
             const [menuCategory, setMenuCategory] = React.useState(null); 
@@ -355,18 +265,15 @@
             const [timer, setTimer] = React.useState(20);
             const [timerEmoji, setTimerEmoji] = React.useState("😃");
             const [errorDetails, setErrorDetails] = React.useState([]);
+            const [showChangelog, setShowChangelog] = React.useState(false);
 
-            // Helper para obter as fases corretas dependendo da categoria
             const getCurrentPhases = () => {
                 if (selectedRecipe?.category === "SMOOTHIE") return PHASES_SMOOTHIE;
                 return PHASES_BOWL;
             };
             
-            // Timer Atualizado com nova lógica de emojis e cor
             React.useEffect(() => {
                 if (gameState !== "PLAYING") return;
-                
-                // Lógica de Emojis conforme solicitado
                 if (timer > 16) setTimerEmoji("😃");
                 else if (timer > 12) setTimerEmoji("🙂");
                 else if (timer > 8) setTimerEmoji("😐");
@@ -374,24 +281,20 @@
                 else setTimerEmoji("😱");
 
                 if (timer === 0) { handleGameOver(false, ["Tempo esgotado!"]); return; }
-                
                 const interval = setInterval(() => setTimer(t => t - 1), 1000);
                 return () => clearInterval(interval);
             }, [timer, gameState]);
 
-            // Opções da fase
             React.useEffect(() => {
                 if (gameState === "PLAYING" && selectedRecipe) {
                     const activePhases = getCurrentPhases();
                     const phaseKey = activePhases[currentPhaseIndex].key;
-                    
                     const fullList = getFullIngredientList(phaseKey);
                     const requiredIngs = selectedRecipe[phaseKey];
                     const requiredSet = new Set(requiredIngs);
                     const requiredUnique = [...requiredSet];
                     const distractors = fullList.filter(ing => !requiredSet.has(ing));
                     const shuffledDistractors = shuffleArray([...distractors]);
-                    
                     const slotsNeeded = Math.max(0, 9 - requiredUnique.length);
                     const selectedDistractors = shuffledDistractors.slice(0, slotsNeeded);
                     const finalOptions = shuffleArray([...requiredUnique, ...selectedDistractors]);
@@ -400,18 +303,11 @@
             }, [currentPhaseIndex, gameState, selectedRecipe]);
 
             const startGame = (recipe) => {
-                setSelectedRecipe(recipe); 
-                setGameState("PLAYING"); 
-                setCurrentPhaseIndex(0); 
-                setCurrentSelections([]); 
-                setAllSelections({}); 
-                setTimer(20);
+                setSelectedRecipe(recipe); setGameState("PLAYING"); setCurrentPhaseIndex(0); setCurrentSelections([]); setAllSelections({}); setTimer(20);
             };
 
             const resetToHome = () => {
-                setGameState("HOME");
-                setMenuCategory(null);
-                setSelectedRecipe(null);
+                setGameState("HOME"); setMenuCategory(null); setSelectedRecipe(null);
             };
 
             const handleSelection = (ingredient) => {
@@ -419,6 +315,9 @@
                 const activePhases = getCurrentPhases();
                 const phase = activePhases[currentPhaseIndex];
                 const requiredList = selectedRecipe[phase.key];
+                
+                // Correção para permitir clicar várias vezes no mesmo ingrediente se a receita pedir
+                // Mas aqui estamos apenas validando se o ingrediente clicado FAZ PARTE da lista, não a quantidade ainda.
                 const isCorrect = requiredList.includes(ingredient);
                 playSound(isCorrect ? "happy" : "sad");
 
@@ -447,13 +346,20 @@
                     if (JSON.stringify(required) !== JSON.stringify(selected)) errors.push(`Erro em ${phase.title.replace(":", "")}. Era: ${required.join(", ")}`);
                 });
                 
+                // Enviar evento para o Google Analytics se configurado
+                if (errors.length === 0 && window.gtag) {
+                    window.gtag('event', 'bowl_concluida', {
+                        'recipe_name': selectedRecipe.name,
+                        'category': selectedRecipe.category
+                    });
+                }
+
                 handleGameOver(errors.length === 0, errors);
             };
 
             const handleGameOver = (success, errors) => {
                 if (success) {
-                    setGameState("RESULT_SUCCESS"); playSound("happy");
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    setGameState("RESULT_SUCCESS"); playSound("happy"); confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 } else {
                     setErrorDetails(errors); setGameState("RESULT_FAIL"); playSound("sad");
                 }
@@ -461,7 +367,6 @@
 
             const getFullIngredientList = (key) => {
                  switch(key) {
-                    // BOWLS
                     case 'base': return INGREDIENTS_DB.bases;
                     case 'sauce_base': return INGREDIENTS_DB.sauces_base;
                     case 'greens': return INGREDIENTS_DB.greens;
@@ -469,50 +374,37 @@
                     case 'sauce_final': return INGREDIENTS_DB.sauces_final;
                     case 'crispy': return INGREDIENTS_DB.crispies;
                     case 'sesame': return INGREDIENTS_DB.sesame;
-                    
-                    // SMOOTHIES
                     case 'smoothie_liquid': return INGREDIENTS_DB.smoothie_liquid;
                     case 'smoothie_amount': return INGREDIENTS_DB.smoothie_amount;
                     case 'smoothie_ingredients': return INGREDIENTS_DB.smoothie_ingredients;
                     case 'smoothie_ice': return INGREDIENTS_DB.smoothie_ice;
                     case 'smoothie_mode': return INGREDIENTS_DB.smoothie_mode;
-                    
                     default: return [];
                 }
             };
 
-            const getCurrentPhaseData = () => {
-                if(!selectedRecipe) return {};
-                const phases = getCurrentPhases();
-                return phases[currentPhaseIndex];
-            };
+            const getCurrentPhaseData = () => { if(!selectedRecipe) return {}; const phases = getCurrentPhases(); return phases[currentPhaseIndex]; };
 
             return (
                 <div className="fixed inset-0 w-full h-full font-sans text-slate-800 flex flex-col md:flex-row overflow-hidden">
                     <OceanBackground active={gameState !== "PLAYING"} />
                     
-                    {/* MENU */}
-                    <div className={`p-4 md:w-1/4 flex flex-col gap-2 transition-all duration-500 z-10 bg-pastel-blue-100/80 backdrop-blur-md border-r border-pastel-blue-200/40 shadow-lg
-                        ${gameState === "HOME" ? "w-full h-full overflow-y-auto" : "hidden md:flex h-full overflow-y-auto"}
-                    `}>
+                    {/* MENU LATERAL */}
+                    <div className={`p-4 md:w-1/4 flex flex-col gap-2 transition-all duration-500 z-10 bg-pastel-blue-100/80 backdrop-blur-md border-r border-pastel-blue-200/40 shadow-lg ${gameState === "HOME" ? "w-full h-full overflow-y-auto" : "hidden md:flex h-full overflow-y-auto"}`}>
                         <div className="mb-6 text-center md:text-left flex justify-center md:justify-start">
                             <img src="https://storage.googleapis.com/ikona-bucket-production/images/5db193be3ea71a0001bb09f7/EXTENDED%20VERSION_original%20colors-617ac363073e550017b9966b.png" alt="Poke House Logo" className="h-12 md:h-16 object-contain" />
                         </div>
                         
                         {menuCategory === null ? (
                             <div className="flex flex-col gap-4 mt-4 md:mt-0 h-full justify-center md:justify-start">
-                                
                                 <button onClick={() => setMenuCategory("HOUSE")} className="bg-pastel-blue-400 text-white p-6 rounded-2xl shadow-lg hover:bg-pastel-blue-500 transition-all transform hover:scale-105 flex flex-col items-center">
-                                    <span className="text-4xl mb-2">🐟</span>
-                                    <span className="text-xl font-bold">House Bowls</span>
+                                    <span className="text-4xl mb-2">🐟</span> <span className="text-xl font-bold">House Bowls</span>
                                 </button>
                                 <button onClick={() => setMenuCategory("GREEN")} className="bg-pastel-green text-slate-800 p-6 rounded-2xl shadow-lg hover:bg-green-300 transition-all transform hover:scale-105 flex flex-col items-center">
-                                    <span className="text-4xl mb-2">🥗</span>
-                                    <span className="text-xl font-bold">Green Bowls</span>
+                                    <span className="text-4xl mb-2">🥗</span> <span className="text-xl font-bold">Green Bowls</span>
                                 </button>
                                  <button onClick={() => setMenuCategory("SMOOTHIE")} className="bg-pastel-yellow text-slate-800 p-6 rounded-2xl shadow-lg hover:bg-yellow-200 transition-all transform hover:scale-105 flex flex-col items-center">
-                                    <span className="text-4xl mb-2">🥤</span>
-                                    <span className="text-xl font-bold">Smoothies</span>
+                                    <span className="text-4xl mb-2">🥤</span> <span className="text-xl font-bold">Smoothies</span>
                                 </button>
                             </div>
                         ) : (
@@ -528,7 +420,7 @@
                         )}
                     </div>
 
-                    {/* JOGO */}
+                    {/* ÁREA DO JOGO */}
                     <div className={`flex-1 relative z-10 flex flex-col items-center justify-center p-2 md:p-6 ${gameState === "HOME" ? "hidden md:flex" : "flex h-full"}`}>
                         
                         {gameState === "PLAYING" && (
@@ -539,28 +431,25 @@
                                 <div className="flex justify-between items-center p-4 border-b border-pastel-blue-200/50 bg-pastel-blue-100/40 shrink-0">
                                     <div>
                                         <h2 className="text-xl md:text-3xl font-bold text-pastel-blue-500">{getCurrentPhaseData().title}</h2>
-                                        
                                         <p className="text-xs md:text-base text-slate-600">
                                             {selectedRecipe[getCurrentPhaseData().key].length > 1 
                                                 ? `Escolha ${selectedRecipe[getCurrentPhaseData().key].length} opções.` 
                                                 : getCurrentPhaseData().hint}
                                         </p>
-
                                         <div className="text-xs md:text-sm mt-1 font-bold text-pastel-blue-400">Selecionado: {currentSelections.length} / {selectedRecipe[getCurrentPhaseData().key].length}</div>
                                     </div>
                                     <div className="flex flex-col items-center min-w-[60px]">
                                         <span className="text-3xl md:text-4xl">{timerEmoji}</span>
-                                        {/* Timer muda para vermelho quando <= 6s */}
                                         <span className={`text-xl md:text-2xl font-bold ${timer <= 6 ? 'text-red-500' : 'text-pastel-blue-500'}`}>{timer}s</span>
                                     </div>
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-2 md:p-6 custom-scroll min-h-0 flex items-center justify-center">
                                     <div className={`grid gap-2 md:gap-4 w-full ${phaseOptions.length > 6 ? 'grid-cols-3 md:grid-cols-3' : 'grid-cols-2 md:grid-cols-3'}`}>
-                                        {phaseOptions.map(ing => {
+                                        {phaseOptions.map((ing, idx) => {
                                             const count = currentSelections.filter(i => i === ing).length;
                                             const isNoLeva = ing === "Não leva" || ing === "Não";
                                             return (
-                                                <button key={ing} onClick={() => handleSelection(ing)} className={`relative p-2 md:p-4 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all active:scale-95 flex items-center justify-center text-center h-24 md:h-32 shadow-sm break-words leading-tight animate-fade-in ${isNoLeva ? "bg-pastel-blue-300 text-white hover:bg-pastel-blue-400" : "bg-white text-slate-700 border-2 border-pastel-blue-200 hover:border-pastel-blue-400 shadow-md hover:shadow-lg"}`}>
+                                                <button key={idx} onClick={() => handleSelection(ing)} className={`relative p-2 md:p-4 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all active:scale-95 flex items-center justify-center text-center h-24 md:h-32 shadow-sm break-words leading-tight animate-fade-in ${isNoLeva ? "bg-pastel-blue-300 text-white hover:bg-pastel-blue-400" : "bg-white text-slate-700 border-2 border-pastel-blue-200 hover:border-pastel-blue-400 shadow-md hover:shadow-lg"}`}>
                                                     {ing}
                                                     {count > 0 && <span className="absolute -top-2 -right-2 bg-pastel-blue-500 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow-md z-10">{count}</span>}
                                                 </button>
@@ -580,9 +469,7 @@
                                 <h2 className="text-3xl md:text-4xl font-extrabold text-pastel-green mb-6 drop-shadow-sm flex items-center justify-center gap-2">
                                     <IconCheck size={40} /> Perfeita!
                                 </h2>
-                                
                                 <p className="text-slate-600 mb-8 font-medium">Você completou corretamente.</p>
-
                                 <button onClick={resetToHome} className="mt-4 bg-pastel-blue-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-pastel-blue-400 transition-all active:scale-95 flex items-center justify-center gap-2 w-full">
                                     <IconHome size={24}/> Voltar ao Início
                                 </button>
@@ -609,10 +496,18 @@
                             </div>
                         )}
                     </div>
-                     {/* VERSION LABEL */}
-       <div className="fixed bottom-1 right-2 text-xs text-slate-500/60 font-sans z-50 pointer-events-none select-none">
-           v2.04 BETA
-       </div>
+                    
+                    {/* BOTÃO DE VERSÃO & MODAL */}
+                    <div className="fixed bottom-1 right-2 z-50">
+                        <button 
+                            onClick={() => setShowChangelog(true)}
+                            className="text-xs text-slate-500/60 font-sans hover:text-pastel-blue-500 hover:underline transition-colors select-none"
+                        >
+                            v2.05 BETA
+                        </button>
+                    </div>
+                    
+                    {showChangelog && <ChangelogModal onClose={() => setShowChangelog(false)} />}
                 </div>
             );
         }
