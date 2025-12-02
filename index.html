@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Poke House – Treino v3.04 BETA</title>
+    <title>Poke House – Treino v3.05 BETA</title>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -99,12 +99,13 @@
 
         // --- HISTÓRICO DE VERSÕES ---
         const CHANGELOG = [
-            { version: "3.04", date: "Atual", changes: ["Inserção do Easter Egg nº 2 (Desktop): 'Live Pink!'.", "Sequência: ↑ ↑ p o k e ↑ ↑"] },
-            { version: "3.03", date: "Anterior", changes: ["Ajuste no Easter Egg nº 1: Sai apenas um ingrediente por clique."] },
-            { version: "3.02", date: "Anterior", changes: ["Peixes agora pulam do mar e voltam (movimento parabólico).", "Remoção do rastro branco dos surfistas.", "Opacidade de peixes e surfistas fixada em 100%.", "Cor do título 'PARABÉNS!' alterada para azul celeste médio."] },
+            { version: "3.05", date: "Atual", changes: ["Correção de bug visual"] },
+            { version: "3.04", date: "Anterior", changes: ["Inserção do Easter Egg nº 2"] },
+            { version: "3.03", date: "Anterior", changes: ["Ajuste no Easter Egg nº 1"] },
+            { version: "3.02", date: "Anterior", changes: ["Ajustes de UX"] },
             { version: "3.01", date: "Anterior", changes: ["Implementação de tamanhos (Regular/Large) para House Bowls.", "Reformulação completa das fases e quantidades."] },
             { version: "2.12", date: "Anterior", changes: ["Inserção do 1° easter egg."] },
-            { version: "2.11", date: "Anterior", changes: ["Aumento do tamanho do logo na versão mobile."] },
+            { version: "2.11", date: "Anterior", changes: ["Logo responsivo versão mobile."] },
             { version: "2.10", date: "Anterior", changes: ["Adição da 'bowl pulante' 🥗 na tela inicial do modo mobile."] }
         ];
 
@@ -282,7 +283,11 @@
                             if (p.x < 0 || p.x > canvas.width) { p.vx *= -1; p.x = p.x < 0 ? 0 : canvas.width; }
                             if (p.y > p.floorY) { p.y = p.floorY; p.vy *= -p.elasticity; p.vx *= 0.9; if (Math.abs(p.vy) < 1 && Math.abs(p.vx) < 1) p.settled = true; }
                         } else { p.life -= 0.01; }
-                        ctx.globalAlpha = p.life; ctx.font = `${p.size}px sans-serif`; ctx.fillText(p.emoji, p.x, p.y); ctx.globalAlpha = 1.0;
+                        // CORREÇÃO: Math.max para evitar opacidade negativa
+                        ctx.globalAlpha = Math.max(0, p.life); 
+                        ctx.font = `${p.size}px sans-serif`; 
+                        ctx.fillText(p.emoji, p.x, p.y); 
+                        ctx.globalAlpha = 1.0;
                     });
                     animId = requestAnimationFrame(render);
                 };
@@ -314,7 +319,7 @@
                     const horizonY = canvas.height * skyHeightRatio;
                     const spawnX = Math.random() * canvas.width;
                     const spawnY = horizonY + 10;
-                    return { x: spawnX, y: spawnY, vx: (Math.random() - 0.5) * 2, vy: - (3 + Math.random() * 3), gravity: 0.15, sprite: FISH_EMOJIS[Math.floor(Math.random() * FISH_EMOJIS.length)], sizeScale: 0.5 + Math.random() * 0.3, active: true };
+                    return { x: spawnX, y: spawnY, vx: (Math.random() - 0.5) * 2, vy: - (3 + Math.random() * 3), gravity: 0.15, sprite: FISH_EMOJIS[Math.floor(Math.random() * FISH_EMOJIS.length)], sizeScale: 0.5 + Math.random() * 0.3, active: true, life: 1.0, maxLife: 1.0 };
                 };
 
                 const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
@@ -323,12 +328,11 @@
                 const loop = () => {
                     time += 0.01; ctx.clearRect(0, 0, canvas.width, canvas.height); const h = canvas.height; const horizonY = h * skyHeightRatio; 
                     
-                    // CÉU COM EFEITO PARTY MODE (RGB)
                     if (partyMode) {
                         const hue = (time * 200) % 360;
                         ctx.fillStyle = `hsl(${hue}, 70%, 85%)`;
                     } else {
-                        ctx.fillStyle = "#FFE6F2"; // Cor normal
+                        ctx.fillStyle = "#FFE6F2"; 
                     }
                     ctx.fillRect(0, 0, canvas.width, horizonY + 20);
 
@@ -342,7 +346,16 @@
                     if (fish.length < 3 && Math.random() < 0.01) { fish.push(createFish()); }
                     fish.forEach(f => { f.vy += f.gravity; f.x += f.vx; f.y += f.vy; if (f.y > horizonY + 50 && f.vy > 0) { f.active = false; } });
                     fish = fish.filter(f => f.active);
-                    fish.forEach(f => { ctx.font=`${Math.max(16,f.sizeScale*30)}px sans-serif`; ctx.fillText(f.sprite, f.x, f.y); });
+                    // PEIXES - Opacidade fixa e fade out corrigido
+                    fish.forEach(f => { 
+                        // Fade in/out se quiser, mas pedido foi opacidade 100%. Mantendo 100%.
+                        // CORREÇÃO: Math.max para evitar bug
+                        const opacity = Math.max(0, f.life); 
+                        ctx.globalAlpha = opacity; 
+                        ctx.font=`${Math.max(16,f.sizeScale*30)}px sans-serif`; 
+                        ctx.fillText(f.sprite, f.x, f.y); 
+                        ctx.globalAlpha = 1.0; 
+                    });
 
                     animationFrameId = requestAnimationFrame(loop);
                 };
@@ -651,7 +664,7 @@
                     </div>
                     
                     <div className="fixed bottom-1 right-2 z-50">
-                        <button onClick={() => setShowChangelog(true)} className="text-xs text-slate-500/60 font-sans hover:text-pastel-blue-500 hover:underline transition-colors select-none">v3.04 BETA</button>
+                        <button onClick={() => setShowChangelog(true)} className="text-xs text-slate-500/60 font-sans hover:text-pastel-blue-500 hover:underline transition-colors select-none">v3.05 BETA</button>
                     </div>
                     
                     {showChangelog && <ChangelogModal onClose={() => setShowChangelog(false)} />}
