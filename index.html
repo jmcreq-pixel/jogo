@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Poke House – Treino v2.09 BETA</title>
+    <title>Poke House – Treino v2.10 BETA</title>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -98,7 +98,8 @@
 
         // --- HISTÓRICO DE VERSÕES ---
         const CHANGELOG = [
-            { version: "2.09", date: "Atual", changes: ["Novas mensagens aleatórias de feedback (Sucesso e Erro)."] },
+            { version: "2.10", date: "Atual", changes: ["Adição da 'bowl pulante' 🥗 na tela inicial do modo mobile."] },
+            { version: "2.09", date: "Anterior", changes: ["Novas mensagens aleatórias de feedback (Sucesso e Erro)."] },
             { version: "2.08", date: "Anterior", changes: ["Atualização de UX: Mar e surfistas. Inserção de peixes.", "Correção do fundo rosa aparecendo no mar.", "Peixes aparecem por 2s e sobem sumindo."] },
             { version: "2.06", date: "Anterior", changes: ["Atualização da receita Vegetarian (Amêndoas e Sem Sésamo)."] },
             { version: "2.05", date: "Anterior", changes: ["Menu de 'Versão' clicável com histórico de alterações."] },
@@ -456,6 +457,11 @@
                             <img src="https://storage.googleapis.com/ikona-bucket-production/images/5db193be3ea71a0001bb09f7/EXTENDED%20VERSION_original%20colors-617ac363073e550017b9966b.png" alt="Poke House Logo" className="h-12 md:h-16 object-contain" />
                         </div>
                         
+                        {/* BOWL PULANTE NO MOBILE */}
+                        {gameState === "HOME" && menuCategory === null && (
+                            <div className="md:hidden text-6xl animate-bounce text-center mb-6">🥗</div>
+                        )}
+
                         {menuCategory === null ? (
                             <div className="flex flex-col gap-4 mt-4 md:mt-0 h-full justify-center md:justify-start">
                                 <button onClick={() => setMenuCategory("HOUSE")} className="bg-pastel-blue-400 text-white p-6 rounded-2xl shadow-lg hover:bg-pastel-blue-500 transition-all transform hover:scale-105 flex flex-col items-center">
@@ -566,7 +572,7 @@
                             onClick={() => setShowChangelog(true)}
                             className="text-xs text-slate-500/60 font-sans hover:text-pastel-blue-500 hover:underline transition-colors select-none"
                         >
-                            v2.09 BETA
+                            v2.10 BETA
                         </button>
                     </div>
                     
